@@ -100,7 +100,14 @@ function gridClickListener() {
 }
 
 function showEditPixelForm(pixel) {
+    let pixelDOM = document.getElementById(`pixel-${pixel.x},${pixel.y}`)
     let form = document.getElementById('edit-pixel-form')
+    var anotherPopper = new Popper(
+        pixelDOM,
+        form, {
+            // popper options here
+        }
+    );
     form.style.visibility = 'visible'
     form.dataset.id=pixel.x*50 + pixel.y + 1
 }

@@ -39,33 +39,40 @@
 }
 
 
-.selected {
-    opacity: .8;
-}
 
 
 /* Edit form */
 
 #edit-pixel-form {
     visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    border-radius: 0.35em;
 }
 
 
 .colorPicker {
-    margin: 2em;
+    
     font-size: 0.875em;
     text-align: center;
     display: inline-table;
     width: 100%;
     max-width: 40em;
-    background: #fff;
+    background: black;
     padding: 2px;
     border-radius: 0.35em;
     box-shadow: 0 0.5em 1.5em rgba(0, 0, 0, 0.15);
     
+}
+
+.colorPicker::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+
 }
 
 .colorPicker label {
@@ -78,8 +85,6 @@
     text-transform: capitalize;
     letter-spacing: -0.5em;
     color: transparent;
-    opacity: 0.35;
-    width: 1%;
     background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.1));
 }
 
@@ -146,33 +151,13 @@
     border-radius: 0 0.25em 0.25em 0;
 }
 
-.colorPicker label:hover {
-    opacity: 1;
-    color: #fff;
-    letter-spacing: normal;
-}
 
-.colorPicker label.white:hover {
-    opacity: 1;
-    color: #000;
-    letter-spacing: normal;
-}
+
 
 .colorPicker input {
     display: none;
 }
 
-.colorPicker input:checked+label {
-    opacity: 1;
-    color: #fff;
-    letter-spacing: normal;
-}
-
-.colorPicker input.white:checked+label.white {
-    opacity: 1;
-    color: #000;
-    letter-spacing: normal;
-}
 
 
 /* Overall Layout  */
