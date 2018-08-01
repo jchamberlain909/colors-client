@@ -8,10 +8,11 @@ document.addEventListener("DOMContentLoaded",()=>{
     checkForUser()
     subscribeToServer()
     setLogoutListener()
+    setPaintGameListener()
 })
 
 function subscribeToServer() {
-    source = new EventSource('http://localhost:3000/subscribe')
+    source = new EventSource('http://localhost:3000/boards/1/subscribe')
     source.onmessage = (e)=>{
         jsonData = JSON.parse(e.data)
         let pixel = document.getElementById(`pixel-${jsonData.id}`)
@@ -34,8 +35,7 @@ function loginUser(username){
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                username: username,
-                board_id: 1
+                username: username
             })
         })
         .then(res => res.json())
@@ -94,14 +94,21 @@ function displayUserInfo(user) {
 }
 
 function gridClickListener() {
-    document.getElementById('pixel-grid').addEventListener('click',e=>{
-        document.querySelectorAll('.selected').forEach((el)=>{
-            el.classList.remove("selected")
-        })
+    document.getElementById('pixel-grid').addEventListener('click',onGridClick)
+}
 
-        e.target.classList.add("selected")
-        showEditPixelForm(parseInt(e.target.dataset.id))
+function disableGridClickListener() {
+    document.getElementById('pixel-grid').removeEventListener('click',onGridClick)
+}
+
+function onGridClick(e) {
+    document.querySelectorAll('.selected').forEach((el) => {
+        el.classList.remove("selected")
     })
+
+    e.target.classList.add("selected")
+    showEditPixelForm(parseInt(e.target.dataset.id))
+    
 }
 
 function showEditPixelForm(pixelId) {
@@ -115,6 +122,8 @@ function setEditFormListener() {
     document.getElementById('colorPicker').addEventListener('change', e=>{
         if (!sessionStorage.getItem('username')) {
             alert("Please Sign up/Login")
+            let selected = document.querySelector('input[name = "colors"]:checked');
+            selected.checked = false
         }else{
                 document.querySelectorAll('.selected').forEach((el) => {
                     el.classList.remove("selected")
@@ -156,6 +165,7 @@ function incrementUserPixelCount() {
 }
 
 function setLogoutListener() {
+   
     document.getElementById('logout').addEventListener('click', e => {
         // hide user info
         document.getElementById('user-info').style.visibility = 'hidden'
@@ -165,3 +175,74 @@ function setLogoutListener() {
         sessionStorage.clear()
     })
 }
+
+function setPaintGameListener() {
+    document.getElementById('create-game').addEventListener('click',e=>{
+        if (!sessionStorage.getItem('username')) {
+            alert("Please Sign up/Login")
+        }
+        else{
+            // user created game
+            // display start game button
+
+            // Assign color
+
+            createBoard()
+        }
+    })
+
+    // user joined game
+}
+
+
+function createBoard() {
+    fetch(`http://localhost:3000/boards`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            game_type: "paint"
+        })
+    }).then(res=>res.json())
+    .then(boardData=>{
+        // replace canvas with game board
+        appendBoard()
+        initializeBoard(boardData)
+    })
+    
+}
+
+function appendBoard() {
+    let pixelGrid = document.getElementById('pixel-grid')
+    pixelGrid.innerHTML = ""
+    for (let y = 0; y < 10; y++) {
+        // create new row
+        let row = document.createElement('div')
+        row.classList.add('row')
+        pixelGrid.appendChild(row)
+        for (let x = 0; x < 10; x++) {
+            // Create pixel div at x,y
+            let pixel = document.createElement('div')
+            pixel.id = `pixel-${x},${y}`
+            pixel.dataset.x = x
+            pixel.dataset.y = y
+            pixel.classList.add('pixel')
+            row.appendChild(pixel)
+        }
+    }
+}
+
+function initializeBoard(boardData) {
+    boardData.pixels.forEach(pixel=>{
+        let foundPixel = document.getElementById(`pixel-${pixel.x},${pixel.y}`)
+        foundPixel.id = `pixel-${pixel.id}`
+        foundPixel.dataset.id = pixel.id
+        foundPixel.style.backgroundColor = pixel.color
+        foundPixel.style.width = "10%"
+        foundPixel.style.paddingTop = "10%"
+    })
+
+}
+
+
