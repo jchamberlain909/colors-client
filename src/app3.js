@@ -8,6 +8,9 @@ document.addEventListener("DOMContentLoaded",()=>{
     checkForUser()
     subscribeToServer()
     setLogoutListener()
+    document.body.addEventListener('click', e=>{
+        hideEditPixelForm()
+    })
 })
 
 function subscribeToServer() {
@@ -90,12 +93,17 @@ function displayUserInfo(user) {
 
 function gridClickListener() {
     document.getElementById('pixel-grid').addEventListener('click',e=>{
+        e.stopPropagation()
         document.querySelectorAll('.selected').forEach((el)=>{
             el.classList.remove("selected")
         })
 
         e.target.classList.add("selected")
         showEditPixelForm({x: parseInt(e.target.dataset.x),y: parseInt(e.target.dataset.y)})
+    })
+    document.getElementById('pixel-grid').addEventListener('dblclick', e => {
+        e.stopPropagation()
+        // Show user who owns pixel in popup
     })
 }
 
@@ -105,7 +113,9 @@ function showEditPixelForm(pixel) {
     var anotherPopper = new Popper(
         pixelDOM,
         form, {
-            // popper options here
+            modifiers: {
+                offset: {offset:'0,5'}
+            }
         }
     );
     form.style.visibility = 'visible'
@@ -170,4 +180,9 @@ function setLogoutListener() {
         // clear session
         sessionStorage.clear()
     })
+}
+
+
+function hideEditPixelForm() {
+    document.getElementById('edit-pixel-form').style.visibility = 'hidden'
 }
