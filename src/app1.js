@@ -1,7 +1,7 @@
 // Dom content loaded listener
 document.addEventListener("DOMContentLoaded",()=>{
-    createBoard()
-    initializeBoard()
+    createCanvas()
+    initializeCanvas()
     userFormListener()
     gridClickListener()
     setEditFormListener()
@@ -11,10 +11,13 @@ document.addEventListener("DOMContentLoaded",()=>{
 })
 
 function subscribeToServer() {
-    source = new EventSource('http://167.99.230.136/subscribe')
+    source = new EventSource('http://localhost:3000/subscribe')
     source.onmessage = (e)=>{
         jsonData = JSON.parse(e.data)
-        document.getElementById(`pixel-${jsonData.x},${jsonData.y}`).style.backgroundColor = jsonData.color
+        let pixel = document.getElementById(`pixel-${jsonData.id}`)
+        if (pixel) {
+            pixel.style.backgroundColor = jsonData.color
+        }        
     }
 }
 
@@ -25,13 +28,14 @@ function checkForUser() {
 }
 
 function loginUser(username){
-    fetch('http://167.99.230.136/users', {
+    fetch('http://localhost:3000/users', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                username: username
+                username: username,
+                board_id: 1
             })
         })
         .then(res => res.json())
@@ -43,7 +47,7 @@ function loginUser(username){
         })
 }
 
-function createBoard() {
+function createCanvas() {
     let pixelGrid = document.getElementById('pixel-grid')
     for (let y = 0; y < 50; y++) {
         // create new row
@@ -53,7 +57,8 @@ function createBoard() {
         for (let x = 0; x < 50; x++) {
             // Create pixel div at x,y
             let pixel = document.createElement('div')
-            pixel.id=`pixel-${x},${y}`
+            pixel.id=`pixel-${x*50+y+1}`
+            pixel.dataset.id = x*50+y+1
             pixel.dataset.x = x
             pixel.dataset.y= y
             pixel.classList.add('pixel')
@@ -62,13 +67,13 @@ function createBoard() {
     }
 }
 
-function initializeBoard() {
-    fetch('http://167.99.230.136/pixels')
+function initializeCanvas() {
+    fetch('http://localhost:3000/boards/1')
     .then(res => res.json())
-    .then(pixelData=>{
+    .then(canvasData=>{
         
-        pixelData.forEach(pixel => {
-            document.getElementById(`pixel-${pixel.x},${pixel.y}`).style.backgroundColor = pixel.color
+        canvasData.pixels.forEach(pixel => {
+            document.getElementById(`pixel-${pixel.id}`).style.backgroundColor = pixel.color
         });
     })
 }
@@ -95,14 +100,14 @@ function gridClickListener() {
         })
 
         e.target.classList.add("selected")
-        showEditPixelForm({x: parseInt(e.target.dataset.x),y: parseInt(e.target.dataset.y)})
+        showEditPixelForm(parseInt(e.target.dataset.id))
     })
 }
 
-function showEditPixelForm(pixel) {
+function showEditPixelForm(pixelId) {
     let form = document.getElementById('edit-pixel-form')
     form.style.visibility = 'visible'
-    form.dataset.id=pixel.x*50 + pixel.y + 1
+    form.dataset.id=pixelId
 }
 
 
@@ -111,31 +116,27 @@ function setEditFormListener() {
         if (!sessionStorage.getItem('username')) {
             alert("Please Sign up/Login")
         }else{
-            if (document.querySelector('input[name = "colors"]:checked')===null) {
-                alert("Please select a color")
-            }
-            else{
                 document.querySelectorAll('.selected').forEach((el) => {
                     el.classList.remove("selected")
                 })
                 let selected = document.querySelector('input[name = "colors"]:checked');
-                fetch(`http://167.99.230.136/pixels/${document.getElementById('edit-pixel-form').dataset.id}`, {
+                fetch(`http://localhost:3000/pixels/${document.getElementById('edit-pixel-form').dataset.id}`, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ color: selected.value, user_id: sessionStorage.getItem('user_id') })
+                    body: JSON.stringify({ color: selected.value, board_id:1 })
                 }).then(res => res.json())
                     .then(pixelData => {
                         // update dom with color changed
-                        document.getElementById(`pixel-${pixelData.x},${pixelData.y}`).style.backgroundColor = pixelData.color
+                        document.getElementById(`pixel-${pixelData.id}`).style.backgroundColor = pixelData.color
                         selected.checked = false
                         document.getElementById('edit-pixel-form').style.visibility = 'hidden'
                         incrementUserPixelCount()
                 })
-            }
-            
         }
+            
+        
     })
 }
 
@@ -143,7 +144,7 @@ function setEditFormListener() {
 function incrementUserPixelCount() {
     let totalPixels = document.getElementById('total-pixels')
     totalPixels.innerText = parseInt(totalPixels.innerText) + 1
-    fetch(`http://167.99.230.136/users/${sessionStorage.getItem('userId')}`, {
+    fetch(`http://localhost:3000/users/${sessionStorage.getItem('userId')}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
