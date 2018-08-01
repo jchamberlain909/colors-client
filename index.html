@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Colors</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="app1.css" />
+    <script src="./src/app1.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="user-container">
+            <form id="user-form">
+                <input id="username-input" type="text">
+                <button>Login/Signup</button>
+            </form>
+            <div id="user-info">
+                <h3 id="username"></h3> <button id="logout">Logout</button>
+                <p id="total-pixels"></p>
+
+            </div>
+        </div>
+
+        <div id="grid-container">
+            <div id="pixel-grid">
+
+            </div>
+            <form id="edit-pixel-form">
+                <h4>Select Color</h4>
+                <div id="colorPicker" class="colorPicker">
+                    <input type="radio" id="color-red" class="red" name="colors" value="#ff3e05">
+                    <label data-id=1 for="color-red" class="red">Red</label>
+                    <input type="radio" id="color-orange" class="orange" name="colors" value="#ff8d05">
+                    <label data-id=2 for="color-orange" class="orange">Orange</label>
+                    <input type="radio" id="color-yellow" class="yellow" name="colors" value="#ecca05">
+                    <label data-id=3 for="color-yellow" class="yellow">Yellow</label>
+                    <input type="radio" id="color-green" class="green" name="colors" value="#40af04">
+                    <label data-id=4 for="color-green" class="green">Green</label>
+                    <input type="radio" id="color-blue" class="blue" name="colors" value="#057fff">
+                    <label data-id=5 for="color-blue" class="blue">Blue</label>
+                    <input type="radio" id="color-indigo" class="indigo" name="colors" value="#7500ca">
+                    <label data-id=6 for="color-indigo" class="indigo">Indigo</label>
+                    <input type="radio" id="color-violet" class="violet" name="colors" value="#cc6fcc">
+                    <label data-id=7 for="color-violet" class="violet">Violet</label>
+                    <input type="radio" id="color-black" class="black" name="colors" value="#000000">
+                    <label data-id=8 for="color-black" class="black">Black</label>
+                    <input type="radio" id="color-white" class="white" name="colors" value="#FFFFFF">
+                    <label data-id=9 for="color-white" class="white">White</label>
+                    <input type="radio" id="color-brown" class="brown" name="colors" value="#994d33">
+                    <label data-id=10 for="color-brown" class="brown">Brown</label>
+                    <input type="radio" id="color-tan" class="tan" name="colors" value="#FFDAB9">
+                    <label data-id=11 for="color-tan" class="tan">Tan</label>
+                </div>        
+            </form>
+        </div>
+    </div>
+</body>
+</html>
