@@ -26,7 +26,7 @@ function subscribeToServer() {
     source.addEventListener("connected", (e) => {
         console.log(e)
     })
-    
+
     source.addEventListener("pixels",e=>{
         console.log(e)
         let jsonData = JSON.parse(e.data)
@@ -75,7 +75,7 @@ function createCanvas() {
         for (let x = 0; x < 50; x++) {
             // Create pixel div at x,y
             let pixel = document.createElement('div')
-            pixel.id=`pixel-${x*50+y+1}`
+            pixel.id=`pixel-${x},${y}`
             pixel.dataset.id = x*50+y+1
             pixel.dataset.x = x
             pixel.dataset.y= y
@@ -85,13 +85,13 @@ function createCanvas() {
     }
 }
 
-function initializeBoard() {
+function initializeCanvas() {
     fetch(`${requestUrlBase}/pixels`)
     .then(res => res.json())
-    .then(canvasData=>{
-        
-        canvasData.pixels.forEach(pixel => {
-            document.getElementById(`pixel-${pixel.id}`).style.backgroundColor = pixel.color
+    .then(pixelData=>{
+
+        pixelData.forEach(pixel => {
+            document.getElementById(`pixel-${pixel.x},${pixel.y}`).style.backgroundColor = pixel.color
         });
     })
 }
@@ -108,7 +108,7 @@ function displayUserInfo(user) {
     document.getElementById('user-info').style.visibility = 'visible'
     document.getElementById('username').innerText = user.username
     document.getElementById('total-pixels').innerText = user.totalPixels
-    
+
 }
 
 function gridClickListener() {
@@ -119,7 +119,7 @@ function gridClickListener() {
         })
 
         e.target.classList.add("selected")
-        showEditPixelForm(parseInt(e.target.dataset.id))
+        showEditPixelForm({x: parseInt(e.target.dataset.x), y:parseInt(e.target.dataset.y)})
     })
     document.getElementById('pixel-grid').addEventListener('dblclick', e => {
         e.stopPropagation()
@@ -139,7 +139,7 @@ function showEditPixelForm(pixel) {
         }
     );
     form.style.visibility = 'visible'
-    form.dataset.id=pixelId
+    form.dataset.id= pixel.x * 50 + pixel.y + 1
 }
 
 
@@ -157,19 +157,19 @@ function setEditFormListener() {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify({ color: selected.value, board_id:1 })
+                    body: JSON.stringify({ color: selected.value, user_id: sessionStorage.getItem('userId')})
                 }).then(res => res.json())
                     .then(pixelData => {
                         console.log(pixelData)
                         // update dom with color changed
-                        document.getElementById(`pixel-${pixelData.id}`).style.backgroundColor = pixelData.color
+                        document.getElementById(`pixel-${pixelData.x},${pixelData.y}`).style.backgroundColor = pixelData.color
                         selected.checked = false
                         document.getElementById('edit-pixel-form').style.visibility = 'hidden'
                         incrementUserPixelCount()
                 })
         }
-            
-        
+
+
     })
 }
 
