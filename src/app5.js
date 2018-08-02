@@ -1,3 +1,6 @@
+const requestUrlBase = 'http://167.99.230.136'
+
+
 // Dom content loaded listener
 document.addEventListener("DOMContentLoaded",()=>{
     createBoard()
@@ -14,11 +17,23 @@ document.addEventListener("DOMContentLoaded",()=>{
 })
 
 function subscribeToServer() {
-    source = new EventSource('http://167.99.230.136/subscribe')
-    source.onmessage = (e)=>{
-        jsonData = JSON.parse(e.data)
+    source = new EventSource(`${requestUrlBase}/subscribe`)
+
+    setInterval(()=>console.log(source.readyState),1000)
+
+    source.addEventListener("connected", (e) => {
+        console.log(e)
+    })
+    
+    source.addEventListener("pixels",e=>{
+        console.log(e)
+        let jsonData = JSON.parse(e.data)
         document.getElementById(`pixel-${jsonData.x},${jsonData.y}`).style.backgroundColor = jsonData.color
-    }
+    })
+    source.addEventListener("messages", e => {
+        // let jsonData = JSON.parse(e.data)
+        console.log(e.data)
+    })
 }
 
 function checkForUser() {
@@ -28,7 +43,7 @@ function checkForUser() {
 }
 
 function loginUser(username){
-    fetch('http://167.99.230.136/users', {
+    fetch(`${requestUrlBase}/users`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -66,7 +81,7 @@ function createBoard() {
 }
 
 function initializeBoard() {
-    fetch('http://167.99.230.136/pixels')
+    fetch(`${requestUrlBase}/pixels`)
     .then(res => res.json())
     .then(pixelData=>{
         
@@ -136,7 +151,7 @@ function setEditFormListener() {
                     el.classList.remove("selected")
                 })
                 let selected = document.querySelector('input[name = "colors"]:checked');
-                fetch(`http://167.99.230.136/pixels/${document.getElementById('edit-pixel-form').dataset.id}`, {
+                fetch(`${ requestUrlBase }/pixels/${document.getElementById('edit-pixel-form').dataset.id}`, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json"
@@ -144,6 +159,7 @@ function setEditFormListener() {
                     body: JSON.stringify({ color: selected.value, user_id: sessionStorage.getItem('user_id') })
                 }).then(res => res.json())
                     .then(pixelData => {
+                        console.log(pixelData)
                         // update dom with color changed
                         document.getElementById(`pixel-${pixelData.x},${pixelData.y}`).style.backgroundColor = pixelData.color
                         selected.checked = false
@@ -160,7 +176,7 @@ function setEditFormListener() {
 function incrementUserPixelCount() {
     let totalPixels = document.getElementById('total-pixels')
     totalPixels.innerText = parseInt(totalPixels.innerText) + 1
-    fetch(`http://167.99.230.136/users/${sessionStorage.getItem('userId')}`, {
+    fetch(`${ requestUrlBase }/users/${sessionStorage.getItem('userId')}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
