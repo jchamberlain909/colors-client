@@ -1,3 +1,6 @@
+const requestUrlBase = 'http://167.99.230.136'
+
+
 // Dom content loaded listener
 document.addEventListener("DOMContentLoaded",()=>{
     createCanvas()
@@ -8,17 +11,32 @@ document.addEventListener("DOMContentLoaded",()=>{
     checkForUser()
     subscribeToServer()
     setLogoutListener()
+    document.body.addEventListener('click', e=>{
+        hideEditPixelForm()
+    })
 })
 
 function subscribeToServer() {
-    source = new EventSource('http://localhost:3000/subscribe')
-    source.onmessage = (e)=>{
-        jsonData = JSON.parse(e.data)
-        let pixel = document.getElementById(`pixel-${jsonData.id}`)
-        if (pixel) {
-            pixel.style.backgroundColor = jsonData.color
-        }        
-    }
+
+
+    source = new EventSource(`${requestUrlBase}/subscribe`)
+
+    setInterval(()=>console.log(source.readyState),1000)
+
+    source.addEventListener("connected", (e) => {
+        console.log(e)
+    })
+    
+    source.addEventListener("pixels",e=>{
+        console.log(e)
+        let jsonData = JSON.parse(e.data)
+        document.getElementById(`pixel-${jsonData.x},${jsonData.y}`).style.backgroundColor = jsonData.color
+    })
+    source.addEventListener("messages", e => {
+        // let jsonData = JSON.parse(e.data)
+        console.log(e.data)
+    })
+
 }
 
 function checkForUser() {
@@ -28,7 +46,7 @@ function checkForUser() {
 }
 
 function loginUser(username){
-    fetch('http://localhost:3000/users', {
+    fetch(`${requestUrlBase}/users`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -67,8 +85,8 @@ function createCanvas() {
     }
 }
 
-function initializeCanvas() {
-    fetch('http://localhost:3000/boards/1')
+function initializeBoard() {
+    fetch(`${requestUrlBase}/pixels`)
     .then(res => res.json())
     .then(canvasData=>{
         
@@ -95,6 +113,7 @@ function displayUserInfo(user) {
 
 function gridClickListener() {
     document.getElementById('pixel-grid').addEventListener('click',e=>{
+        e.stopPropagation()
         document.querySelectorAll('.selected').forEach((el)=>{
             el.classList.remove("selected")
         })
@@ -102,10 +121,23 @@ function gridClickListener() {
         e.target.classList.add("selected")
         showEditPixelForm(parseInt(e.target.dataset.id))
     })
+    document.getElementById('pixel-grid').addEventListener('dblclick', e => {
+        e.stopPropagation()
+        // Show user who owns pixel in popup
+    })
 }
 
-function showEditPixelForm(pixelId) {
+function showEditPixelForm(pixel) {
+    let pixelDOM = document.getElementById(`pixel-${pixel.x},${pixel.y}`)
     let form = document.getElementById('edit-pixel-form')
+    var anotherPopper = new Popper(
+        pixelDOM,
+        form, {
+            modifiers: {
+                offset: {offset:'0,5'}
+            }
+        }
+    );
     form.style.visibility = 'visible'
     form.dataset.id=pixelId
 }
@@ -120,7 +152,7 @@ function setEditFormListener() {
                     el.classList.remove("selected")
                 })
                 let selected = document.querySelector('input[name = "colors"]:checked');
-                fetch(`http://localhost:3000/pixels/${document.getElementById('edit-pixel-form').dataset.id}`, {
+                fetch(`${ requestUrlBase }/pixels/${document.getElementById('edit-pixel-form').dataset.id}`, {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json"
@@ -128,6 +160,7 @@ function setEditFormListener() {
                     body: JSON.stringify({ color: selected.value, board_id:1 })
                 }).then(res => res.json())
                     .then(pixelData => {
+                        console.log(pixelData)
                         // update dom with color changed
                         document.getElementById(`pixel-${pixelData.id}`).style.backgroundColor = pixelData.color
                         selected.checked = false
@@ -144,7 +177,7 @@ function setEditFormListener() {
 function incrementUserPixelCount() {
     let totalPixels = document.getElementById('total-pixels')
     totalPixels.innerText = parseInt(totalPixels.innerText) + 1
-    fetch(`http://localhost:3000/users/${sessionStorage.getItem('userId')}`, {
+    fetch(`${ requestUrlBase }/users/${sessionStorage.getItem('userId')}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -164,4 +197,9 @@ function setLogoutListener() {
         // clear session
         sessionStorage.clear()
     })
+}
+
+
+function hideEditPixelForm() {
+    document.getElementById('edit-pixel-form').style.visibility = 'hidden'
 }
