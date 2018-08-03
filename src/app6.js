@@ -62,9 +62,10 @@ function subscribeToServer() {
     })
 
     source.addEventListener("pixels",e=>{
-        
         let jsonData = JSON.parse(e.data)
-        document.getElementById(`pixel-${jsonData.x},${jsonData.y}`).style.backgroundColor = jsonData.color
+        let pixelDOM = document.getElementById(`pixel-${jsonData.x},${jsonData.y}`)
+        pixelDOM.style.backgroundColor = jsonData.color
+        pixelDOM.dataset.username = jsonData.username
     })
     source.addEventListener("messages", e => {
         let messageData = JSON.parse(e.data)
