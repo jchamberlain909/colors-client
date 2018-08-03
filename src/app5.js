@@ -43,7 +43,7 @@ function setMessageFormListener() {
 function createMessage(username,messageText,timeStamp) {
     let message = document.createElement('p')
     message.classList.add('message')
-    message.innerHTML = `${username}: ${messageText} - ${timeStamp}UTC`
+    message.innerHTML = `<strong>${username}:</strong><br> <p>   ${messageText} - ${timeStamp} UTC</p>`
     prependMessage(message)
 }
 
