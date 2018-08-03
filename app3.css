@@ -56,7 +56,7 @@ body {
 /* Edit form */
 
 #edit-pixel-form {
-    background-color: #ffffff;
+    background-color: transparent;
     display: none;
     border-radius: 0.35em;
     display: flex;

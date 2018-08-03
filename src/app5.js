@@ -164,20 +164,20 @@ function gridClickListener() {
 
 function showEditPixelForm(pixel) {
     let pixelDOM = document.getElementById(`pixel-${pixel.x},${pixel.y}`)
-    let form = document.getElementById('edit-pixel-form')
-    form.querySelector('#pixel-owner').innerText = pixelDOM.dataset.username
-    var anotherPopper = new Popper(
-        pixelDOM,
-        form, {
-            modifiers: {
-                offset: {offset:'0,5'}
+    if (pixelDOM) {
+        let form = document.getElementById('edit-pixel-form')
+        form.querySelector('#pixel-owner').innerText = pixelDOM.dataset.username
+        var anotherPopper = new Popper(
+            pixelDOM,
+            form, {
+                modifiers: {
+                    offset: { offset: '0,5' }
+                }
             }
-        }
-    );
-    form.style.display = 'flex'
-    form.dataset.id= pixel.x * 50 + pixel.y + 1
-
-    
+        );
+        form.style.display = 'flex'
+        form.dataset.id = pixel.x * 50 + pixel.y + 1
+    }
 }
 
 
