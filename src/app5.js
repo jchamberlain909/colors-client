@@ -11,30 +11,58 @@ document.addEventListener("DOMContentLoaded",()=>{
     checkForUser()
     subscribeToServer()
     setLogoutListener()
+    setMessageFormListener()
     document.body.addEventListener('click', e=>{
         hideEditPixelForm()
     })
 })
+
+function setMessageFormListener() {
+    document.getElementById('message-form').addEventListener('submit',(e)=>{
+        e.preventDefault()
+        let messageInput = document.getElementById('message-input')
+        fetch(`${requestUrlBase}/messages`,{
+           method: "POST",
+               headers: {
+                   "Content-Type": "application/json"
+               },
+               body: JSON.stringify({
+                   message: messageInput.value,
+                   username: sessionStorage.getItem('username')
+               })
+        })
+        .then(res=>messageInput.value="")
+
+    })
+}
+
+function createMessage(username,messageText,timeStamp) {
+    let message = document.createElement('p')
+    message.innerHTML = `${username}: ${messageText} - ${timeStamp}UTC`
+    appendMessage(message)
+}
+
+function appendMessage(message) {
+    document.getElementById('messages').appendChild(message)
+}
 
 function subscribeToServer() {
 
 
     source = new EventSource(`${requestUrlBase}/subscribe`)
 
-    setInterval(()=>console.log(source.readyState),1000)
-
     source.addEventListener("connected", (e) => {
         console.log(e)
     })
 
     source.addEventListener("pixels",e=>{
-        console.log(e)
+        
         let jsonData = JSON.parse(e.data)
         document.getElementById(`pixel-${jsonData.x},${jsonData.y}`).style.backgroundColor = jsonData.color
     })
     source.addEventListener("messages", e => {
-        // let jsonData = JSON.parse(e.data)
-        console.log(e.data)
+        let messageData = JSON.parse(e.data)
+        createMessage(messageData.username, messageData.message, messageData.time)
     })
 
 }
@@ -160,7 +188,6 @@ function setEditFormListener() {
                     body: JSON.stringify({ color: selected.value, user_id: sessionStorage.getItem('userId')})
                 }).then(res => res.json())
                     .then(pixelData => {
-                        console.log(pixelData)
                         // update dom with color changed
                         document.getElementById(`pixel-${pixelData.x},${pixelData.y}`).style.backgroundColor = pixelData.color
                         selected.checked = false
