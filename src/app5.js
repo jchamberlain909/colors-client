@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded",()=>{
 function setMessageFormListener() {
     document.getElementById('message-form').addEventListener('submit',(e)=>{
         e.preventDefault()
+        if (!sessionStorage.getItem('username')) {
+            alert("Please Sign up/Login")
+        }else{
         let messageInput = document.getElementById('message-input')
         fetch(`${requestUrlBase}/messages`,{
            method: "POST",
@@ -33,7 +36,7 @@ function setMessageFormListener() {
                })
         })
         .then(res=>messageInput.value="")
-
+        }
     })
 }
 
