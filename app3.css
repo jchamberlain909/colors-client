@@ -1,19 +1,31 @@
 
 
+body {
+    background-color: #1A237E;
+}
+
 /* user form */
 #user-form {
     display: flex;
     justify-content: center;
     margin: 20px;
+    border-radius: 0.25em;
+    padding: 5px 10px;
+    background-color: #ffffff;
 }
 
 #user-info {
-    visibility: hidden;
+    background-color: #ffffff;
+    display: none;
+    border-radius: 0.25em;
+    padding: 10% 10px;
+    height: 75%;
 }
 
 /* pixel-grid styles */
 
 #pixel-grid {
+    background-color: #ffffff;
     max-width: 700px;
     max-height: 700px;
     width: 100%;
@@ -44,8 +56,12 @@
 /* Edit form */
 
 #edit-pixel-form {
-    visibility: hidden;
+    background-color: #ffffff;
+    display: none;
     border-radius: 0.35em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 
@@ -163,13 +179,118 @@
 /* Overall Layout  */
 
 .container {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: [col-first] 20% [col-center]  auto [col-end];
+    grid-template-rows: [row-first] 25% [row-center] auto [row-end];
+    height: 100vh;
 }
 #user-container {
-    flex-basis: 25%;
+    grid-column-start: col-first;
+    grid-column-end: col-center;
+    grid-row-start: row-first;
+    grid-row-end: row-center;
+
 }
+#chat-container {
+    grid-column-start: col-first;
+    grid-column-end: col-center;
+    grid-row-start: row-center;
+    grid-row-end: row-end;
+    border-radius: 0.25em;
+    padding: 5px 10px;
+    background-color: #ffffff;
+    overflow-y: scroll;
+}
+
 #grid-container {
-    flex-basis: 75%
+    grid-column-start: col-center;
+    grid-column-end: col-end;
+    grid-row-start: row-first;
+    grid-row-end: row-end;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.pixel-owner-container{
+    padding: 0 5px;
+    background: black;
+    color: white;
+    width: fit-content;
+    border-bottom-left-radius: 0.25em;
+    border-bottom-right-radius: 0.25em;
+}
+
+@media only screen and (max-width: 1000px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+    }
+
+    #user-container {
+        width: 90%;
+        order: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #chat-container {
+        width: 90%;
+        order: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-height: 500px;
+    }
+
+    #grid-container {
+        width: 90%;
+        order: 2;
+    }
+
+    #user-info {
+        width: 50%;
+        height: fit-content;
+        padding: 10px 10px;
+    }
+
+    #chat-container {
+        width: 50%;
+        height: fit-content;
+        padding: 10px 10px;
+    }
+
+    #messages {
+        min-height: 100px;
+        overflow: auto;
+    }
+
+}
+
+
+/* messages styles */
+
+#message-form {
+    display: flex;
+    height: 5%;
+}
+
+#message-form input {
+    height: fit-content;
+    flex-grow: 2
+}
+#message-form button {
+    height: fit-content;
+}
+
+#messages {
+    min-height: 100px;
+    max-height: 95%;
+    width: 100%;
+    overflow: auto;
 }

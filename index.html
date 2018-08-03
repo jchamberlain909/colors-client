@@ -6,6 +6,7 @@
     <title>Colors</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="app3.css" />
+    <script src="https://unpkg.com/tooltip.js@1.2.0/dist/umd/tooltip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
     crossorigin="anonymous"></script>
     <script src="./src/app5.js"></script>
@@ -19,18 +20,16 @@
             </form>
             <div id="user-info">
                 <h3 id="username"></h3> <button id="logout">Logout</button>
-                <p id="total-pixels"></p>
-
-            </div>
-            <div class="chat-container">
-                <div id="messages"></div>
-                <form id="message-form">
-                    <input id=message-input type="text">
-                    <button type="submit">Send</button>
-                </form>
+                <p>Total Pixels Changed: <p id="total-pixels"></p></p>
             </div>
         </div>
-
+        <div id="chat-container">
+            <form id="message-form">
+                <input id=message-input type="text">
+                <button type="submit">Send</button>
+            </form>
+            <div id="messages"></div>
+        </div>
         
 
         <div id="grid-container">
@@ -61,7 +60,8 @@
                     <label data-id=10 for="color-brown" class="brown">Brown</label>
                     <input type="radio" id="color-tan" class="tan" name="colors" value="#FFDAB9">
                     <label data-id=11 for="color-tan" class="tan">Tan</label>
-                </div>        
+                </div>  
+                <div class="pixel-owner-container">Owner:<span id="pixel-owner"></span></div>   
             </form>
         </div>
     </div>

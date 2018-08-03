@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded",()=>{
     document.body.addEventListener('click', e=>{
         hideEditPixelForm()
     })
+    document.getElementById('edit-pixel-form').style.display='none'
 })
 
 function setMessageFormListener() {
@@ -38,12 +39,14 @@ function setMessageFormListener() {
 
 function createMessage(username,messageText,timeStamp) {
     let message = document.createElement('p')
+    message.classList.add('message')
     message.innerHTML = `${username}: ${messageText} - ${timeStamp}UTC`
-    appendMessage(message)
+    prependMessage(message)
 }
 
-function appendMessage(message) {
-    document.getElementById('messages').appendChild(message)
+function prependMessage(message) {
+    let messages = document.getElementById('messages')
+    messages.insertBefore(message,messages.firstChild)
 }
 
 function subscribeToServer() {
@@ -88,7 +91,7 @@ function loginUser(username){
         .then(user => {
             sessionStorage.setItem('username', user.username)
             sessionStorage.setItem('userId', user.id)
-            document.getElementById('user-form').style.visibility = 'hidden'
+            document.getElementById('user-form').style.display = 'none'
             displayUserInfo(user)
         })
 }
@@ -119,7 +122,14 @@ function initializeCanvas() {
     .then(pixelData=>{
 
         pixelData.forEach(pixel => {
-            document.getElementById(`pixel-${pixel.x},${pixel.y}`).style.backgroundColor = pixel.color
+            let pixelDOM = document.getElementById(`pixel-${pixel.x},${pixel.y}`)
+            pixelDOM.style.backgroundColor = pixel.color
+            if (pixel.user) {
+                pixelDOM.dataset.username = pixel.user.username
+            }else{
+                pixelDOM.dataset.username = "No User"
+            }
+            
         });
     })
 }
@@ -133,7 +143,7 @@ function userFormListener() {
 }
 
 function displayUserInfo(user) {
-    document.getElementById('user-info').style.visibility = 'visible'
+    document.getElementById('user-info').style.display = 'block'
     document.getElementById('username').innerText = user.username
     document.getElementById('total-pixels').innerText = user.totalPixels
 
@@ -149,15 +159,13 @@ function gridClickListener() {
         e.target.classList.add("selected")
         showEditPixelForm({x: parseInt(e.target.dataset.x), y:parseInt(e.target.dataset.y)})
     })
-    document.getElementById('pixel-grid').addEventListener('dblclick', e => {
-        e.stopPropagation()
-        // Show user who owns pixel in popup
-    })
+    
 }
 
 function showEditPixelForm(pixel) {
     let pixelDOM = document.getElementById(`pixel-${pixel.x},${pixel.y}`)
     let form = document.getElementById('edit-pixel-form')
+    form.querySelector('#pixel-owner').innerText = pixelDOM.dataset.username
     var anotherPopper = new Popper(
         pixelDOM,
         form, {
@@ -166,8 +174,10 @@ function showEditPixelForm(pixel) {
             }
         }
     );
-    form.style.visibility = 'visible'
+    form.style.display = 'flex'
     form.dataset.id= pixel.x * 50 + pixel.y + 1
+
+    
 }
 
 
@@ -188,10 +198,13 @@ function setEditFormListener() {
                     body: JSON.stringify({ color: selected.value, user_id: sessionStorage.getItem('userId')})
                 }).then(res => res.json())
                     .then(pixelData => {
+                        
                         // update dom with color changed
-                        document.getElementById(`pixel-${pixelData.x},${pixelData.y}`).style.backgroundColor = pixelData.color
+                        let pixelDOM = document.getElementById(`pixel-${pixelData.x},${pixelData.y}`)
+                        pixelDOM.style.backgroundColor = pixelData.color
+                        pixelDOM.dataset.username = pixelData.user.username
                         selected.checked = false
-                        document.getElementById('edit-pixel-form').style.visibility = 'hidden'
+                        document.getElementById('edit-pixel-form').style.display = 'none'
                         incrementUserPixelCount()
                 })
         }
@@ -218,9 +231,9 @@ function incrementUserPixelCount() {
 function setLogoutListener() {
     document.getElementById('logout').addEventListener('click', e => {
         // hide user info
-        document.getElementById('user-info').style.visibility = 'hidden'
+        document.getElementById('user-info').style.display = 'none'
         // display loginform
-        document.getElementById('user-form').style.visibility = 'visible'
+        document.getElementById('user-form').style.display = 'block'
         // clear session
         sessionStorage.clear()
     })
@@ -228,5 +241,5 @@ function setLogoutListener() {
 
 
 function hideEditPixelForm() {
-    document.getElementById('edit-pixel-form').style.visibility = 'hidden'
+    document.getElementById('edit-pixel-form').style.display = 'none'
 }
