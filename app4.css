@@ -1,5 +1,4 @@
 
-
 body {
     background-color: #1A237E;
 }
@@ -179,23 +178,19 @@ body {
 /* Overall Layout  */
 
 .container {
-    display: grid;
-    grid-template-columns: [col-first] 20% [col-center]  auto [col-end];
-    grid-template-rows: [row-first] 25% [row-center] auto [row-end];
-    height: 100vh;
-}
-#user-container {
-    grid-column-start: col-first;
-    grid-column-end: col-center;
-    grid-row-start: row-first;
-    grid-row-end: row-center;
+    display: flex;
+    flex-direction: column;
 
 }
+#user-container {
+   
+
+}
+#row-column {
+    
+}
 #chat-container {
-    grid-column-start: col-first;
-    grid-column-end: col-center;
-    grid-row-start: row-center;
-    grid-row-end: row-end;
+   
     border-radius: 0.25em;
     padding: 5px 10px;
     background-color: #ffffff;
@@ -203,10 +198,7 @@ body {
 }
 
 #grid-container {
-    grid-column-start: col-center;
-    grid-column-end: col-end;
-    grid-row-start: row-first;
-    grid-row-end: row-end;
+    
 
     display: flex;
     flex-direction: column;
