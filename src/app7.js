@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         hideEditPixelForm()
     })
     document.getElementById('edit-pixel-form').style.display='none'
+    document.getElementById('user-info').style.display='none'
 })
 
 function setMessageFormListener() {
