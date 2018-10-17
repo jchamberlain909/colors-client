@@ -147,7 +147,7 @@ function userFormListener() {
 }
 
 function displayUserInfo(user) {
-    document.getElementById('user-info').style.display = 'block'
+    document.getElementById('user-info').style.display = 'flex'
     document.getElementById('username').innerText = user.username
     document.getElementById('total-pixels').innerText = user.totalPixels
 
@@ -237,7 +237,7 @@ function setLogoutListener() {
         // hide user info
         document.getElementById('user-info').style.display = 'none'
         // display loginform
-        document.getElementById('user-form').style.display = 'block'
+        document.getElementById('user-form').style.display = 'flex'
         // clear session
         sessionStorage.clear()
     })

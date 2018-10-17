@@ -8,8 +8,8 @@ body {
     display: flex;
     justify-content: center;
     margin: 20px;
-    border-radius: 0.25em;
-    padding: 5px 10px;
+    /* border-radius: 0.25em; */
+    padding: 10px 10px;
     background-color: #ffffff;
 }
 
@@ -17,8 +17,15 @@ body {
     background-color: #ffffff;
     display: none;
     border-radius: 0.25em;
-    padding: 10% 10px;
-    height: 75%;
+    padding: 10px 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* height: 75%; */
+}
+
+#user-info div {
+    display: inline-block;
 }
 
 /* pixel-grid styles */
@@ -27,8 +34,8 @@ body {
     background-color: #ffffff;
     max-width: 700px;
     max-height: 700px;
-    width: 100%;
-    margin: 20px auto;
+    /* width: 100%; */
+    /* margin: 20px auto; */
     border: 1px solid black;
 }
 
@@ -177,29 +184,29 @@ body {
 
 /* Overall Layout  */
 
-.container {
-    display: flex;
-    flex-direction: column;
 
-}
 #user-container {
-   
-
+   width: 50%;
+    margin: 20px auto;
 }
 #row-column {
-    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    /* align-items: center; */
+    /* padding: 20px 5%; */
 }
 #chat-container {
-   
-    border-radius: 0.25em;
+   flex-basis: 30%;
+    /* border-radius: 0.25em; */
     padding: 5px 10px;
     background-color: #ffffff;
     overflow-y: scroll;
 }
 
 #grid-container {
-    
-
+    /* flex-basis: 70%; */
+    flex-basis: 700px;
     display: flex;
     flex-direction: column;
     justify-content: center;
